@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace XmlSharp
+﻿namespace XmlSharp
 {
+    /// <summary>
+    /// Class use for write the exported class.
+    /// </summary>
     public class ClassWriter
     {
         private readonly string Tab = string.Empty.PadRight(4);
@@ -16,29 +13,51 @@ namespace XmlSharp
             Classes = classes;
         }
 
-        public void Write(TextWriter textWriter, string @namespace = "XmlSharp")
+        /// <summary>
+        /// Create the using and the namespace specify in the param.
+        /// </summary>
+        /// <param name="textWriter">The writer where the file will be saved.</param>
+        /// <param name="namespace">The namespace of the exported class.</param>
+        public void Header(TextWriter textWriter, string @namespace = "XmlSharp")
+        {
+            // Required Using.
+            textWriter.WriteLine("using System;");
+            textWriter.WriteLine("using System.Xml.Serialization;");
+            textWriter.WriteLine("using System.Collections.Generic;");
+            textWriter.WriteLine("");
+            textWriter.WriteLine($"namespace {@namespace}");
+            textWriter.WriteLine("{");
+        }
+
+        /// <summary>
+        /// Main writer for all the XElements of the XML.
+        /// </summary>
+        /// <param name="textWriter">The writer where the file will be saved.</param>
+        public void Write(TextWriter textWriter)
         {
             foreach (Class @class in Classes)
             {
-                // Required Using.
-                textWriter.WriteLine("using System;");
-                textWriter.WriteLine("using System.Xml.Serialization;");
-                textWriter.WriteLine("using System.Collections.Generic;");
                 textWriter.WriteLine("");
-                textWriter.WriteLine($"namespace {@namespace}");
-                textWriter.WriteLine("{");
                 textWriter.WriteLine($"{Tab}[XmlRoot(ElementName=\"{@class.XmlName}\")]");
                 textWriter.WriteLine($"{Tab}public class {@class.Name.FirstLetterUpper()}");
                 textWriter.WriteLine($"{Tab}" + "{");
                 foreach (Property property in @class.Properties)
                 {
                     textWriter.WriteLine($"{Tab}{Tab}[Xml{property.XmlType}({property.XmlType}Name=\"{property.XmlName}\")]");
-                    textWriter.WriteLine($"{Tab}{Tab}public {property.Type.ToLower()} {property.Name.FirstLetterUpper()}" + " { get; set; }");
+                    textWriter.WriteLine($"{Tab}{Tab}public {property.Type.FirstLetterUpper()} {property.Name.FirstLetterUpper()}" + " { get; set; }");
                 }
                 textWriter.WriteLine($"{Tab}" + "}"); // Class close
-                textWriter.WriteLine("}"); // Namespce close.
-                textWriter.WriteLine("");
             }
+        }
+
+        /// <summary>
+        /// Ensure the class to close the namespace.
+        /// </summary>
+        /// <param name="textWriter">The writer where the file will be saved.</param>
+        public void Footer(TextWriter textWriter)
+        {
+            textWriter.WriteLine("}"); // Namespce close.
+            textWriter.WriteLine("");
         }
     }
 }

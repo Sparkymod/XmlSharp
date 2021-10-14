@@ -7,9 +7,12 @@ using System.Xml.Linq;
 
 namespace XmlSharp
 {
-    public static class XmlHelper
+    /// <summary>
+    /// Internal class to help the parser.
+    /// </summary>
+    internal static class XmlHelper
     {
-        public static Class ElementToClass(XElement xElement, ICollection<Class> classes)
+        internal static Class ElementToClass(XElement xElement, ICollection<Class> classes)
         {
             Class @class = new ()
             {
@@ -71,15 +74,14 @@ namespace XmlSharp
 
         private static IEnumerable<Property> DuplicateElementsToList(IEnumerable<Property> properties)
         {
-
-            return properties.GroupBy(properties => properties.Name, properties => properties, (key, g) => g.Count() > 1 ? new Property()
+            return properties.GroupBy(properties => properties.Name, properties => properties, (key, group) => group.Count() > 1 ? new Property()
                         {
                             Name = key,
-                            Namespace = g.First().Namespace,
-                            Type = string.Format("List<{0}>", g.First().Type),
-                            XmlName = g.First().Type,
+                            Namespace = group.First().Namespace,
+                            Type = string.Format("List<{0}>", group.First().Type),
+                            XmlName = group.First().Type,
                             XmlType = XmlType.Element
-                        } : g.First()).ToList();
+                        } : group.First()).ToList();
         }
     }
 }
