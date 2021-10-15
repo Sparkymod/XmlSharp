@@ -43,8 +43,10 @@
                 textWriter.WriteLine($"{Tab}" + "{");
                 foreach (Property property in @class.Properties)
                 {
+                    // Correction for types in lowercases.
+                    string typeName = property.Type == "string" ? property.Type : property.Type.FirstLetterUpper();
                     textWriter.WriteLine($"{Tab}{Tab}[Xml{property.XmlType}({property.XmlType}Name=\"{property.XmlName}\")]");
-                    textWriter.WriteLine($"{Tab}{Tab}public {property.Type.FirstLetterUpper()} {property.Name.FirstLetterUpper()}" + " { get; set; }");
+                    textWriter.WriteLine($"{Tab}{Tab}public {typeName} {property.Name.FirstLetterUpper()}" + " { get; set; }");
                 }
                 textWriter.WriteLine($"{Tab}" + "}"); // Class close
             }

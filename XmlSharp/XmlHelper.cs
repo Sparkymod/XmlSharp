@@ -18,10 +18,10 @@ namespace XmlSharp
             {
                 Name = xElement.Name.LocalName,
                 XmlName = xElement.Name.LocalName,
-                Properties = DuplicateElementsToList(ExportProperties(xElement, classes)).ToList()
+                Properties = DuplicateElementsToList(ExportProperties(xElement, classes), classes).ToList()
             };
 
-            RemoveBadString(@class, @classes);
+            //RemoveBadString(@class, @classes);
 
             if (xElement.Parent == null || (!@classes.Contains(@class) && @class.Properties.Any()))
             {
@@ -53,7 +53,7 @@ namespace XmlSharp
                 {
                     Name = attribute.Name.LocalName,
                     XmlName = attribute.Name.LocalName,
-                    Type = attribute.Value.GetType().Name,
+                    Type = attribute.Value.GetType().Name.ToLower(), // TODO: verify if is string or a class.
                     XmlType = XmlType.Attribute
                 };
             }
@@ -72,16 +72,16 @@ namespace XmlSharp
             }
         }
 
-        private static IEnumerable<Property> DuplicateElementsToList(IEnumerable<Property> properties)
+        private static IEnumerable<Property> DuplicateElementsToList(IEnumerable<Property> properties, ICollection<Class> classes)
         {
-            return properties.GroupBy(properties => properties.Name, properties => properties, (key, group) => group.Count() > 1 ? new Property()
-                        {
-                            Name = key,
-                            Namespace = group.First().Namespace,
-                            Type = string.Format("List<{0}>", group.First().Type),
-                            XmlName = group.First().Type,
-                            XmlType = XmlType.Element
-                        } : group.First()).ToList();
+            return properties.GroupBy(p => p.Name).Select(p => p.Count() <= 1 ? p.First() : new Property
+            {
+                Name = p.Key,
+                Namespace = p.First().Namespace,
+                Type = $"List<{p.First().Type}>",
+                XmlName = p.First().Name,
+                XmlType = XmlType.Element
+            });
         }
     }
 }

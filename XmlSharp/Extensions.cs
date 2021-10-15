@@ -34,6 +34,13 @@ namespace XmlSharp
             return @classes;
         }
 
-        public static bool IsEmpty(this XElement element) => !element.HasAttributes && !element.HasElements;
+        public static bool IsEmpty(this XElement element)
+        {
+            if (!element.HasAttributes)
+            {
+                return !element.HasElements;
+            }
+            return false;
+        }
     }
 }
