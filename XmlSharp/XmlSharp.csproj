@@ -10,7 +10,7 @@
     <PackageProjectUrl></PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Sparkymod/XmlSharp</RepositoryUrl>
-    <PackageReleaseNotes>initial commit</PackageReleaseNotes>
+    <PackageReleaseNotes>Ability to make duplicate class to a List.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
