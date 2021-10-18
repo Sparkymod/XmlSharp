@@ -21,7 +21,8 @@ string filePath = "C:\\ExportCSharpClass\\file.cs";
 StreamWriter writer = new(filePath);
 
 // Enable autoflush to ensure save all the text into de file.
-// First you have to write the Header, wich is the 3 using statements you need, and a custom namespace you want.
+// First you have to write the Header, wich is the 3 using statements you need
+// And a custom namespace.
 writer.AutoFlush = true;
 classWriter.Header(writer, "Maplecodex2.Items");
 
