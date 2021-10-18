@@ -21,7 +21,7 @@ namespace XmlSharp
                 return string.Empty;
             }
 
-            char[] letters = input.ToLower().ToCharArray();
+            char[] letters = input.ToCharArray();
             letters[0] = char.ToUpper(letters[0]);
 
             return new string(letters);
