@@ -13,6 +13,7 @@ namespace XmlSharp
         public XmlType XmlType { get; set; }
         public string Namespace { get; set; }
         public string XmlName { get; set; }
+        public bool IsGenericCollection { get; set; }
 
         public override string ToString() => $"Name: {Name}, Type: {Type}, XmlType: {XmlType}, Namespace: {Namespace}, XmlName: {XmlName}";
     }

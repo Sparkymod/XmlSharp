@@ -23,11 +23,17 @@ namespace XmlSharp
 
             RemoveBadString(@class, classes);
 
-            if (xElement.Parent == null || (!@classes.Contains(@class) && @class.Properties.Any()))
+            if (xElement.Parent == null || (!classes.Contains(@class) && @class.Properties.Any()))
             {
-                if (!classes.Any(c => c.Name == @class.Name))
+                if (@class.Properties.Any(p => p.IsGenericCollection) || !classes.Any(c => c.Name == @class.Name))
                 {
                     classes.Add(@class);
+                }
+                // Remove duplicate classes.
+                if (classes.GroupBy(c => c.Name).Any(p => p.Count() > 1))
+                {
+                    IGrouping<string, Class>? duplicate = classes.GroupBy(c => c.Name).FirstOrDefault(c => c.Count() > 1);
+                    classes.Remove(duplicate.Where(p => p.Properties.Any(t => !t.IsGenericCollection)).Select(c => c).FirstOrDefault());
                 }
             }
 
@@ -41,12 +47,13 @@ namespace XmlSharp
                 Class tempClass = ElementToClass(element, classes);
                 string type = element.IsEmpty() ? "string" : tempClass.Name;
 
-                Property property = new ()
+                Property property = new()
                 {
                     Name = tempClass.Name,
                     Type = type,
                     XmlName = tempClass.XmlName,
-                    XmlType = XmlType.Element
+                    XmlType = XmlType.Element,
+                    IsGenericCollection = false,
                 };
 
                 yield return property;
@@ -58,8 +65,9 @@ namespace XmlSharp
                 {
                     Name = attribute.Name.LocalName,
                     XmlName = attribute.Name.LocalName,
-                    Type = attribute.Value.GetType().Name.ToLower(), // TODO: verify if is string or a class.
-                    XmlType = XmlType.Attribute
+                    Type = attribute.Value.GetType().Name.ToLower(),
+                    XmlType = XmlType.Attribute,
+                    IsGenericCollection = false,
                 };
 
                 yield return property;
@@ -87,7 +95,8 @@ namespace XmlSharp
                 Namespace = p.First().Namespace,
                 Type = $"List<{p.First().Type.FirstLetterUpper()}>",
                 XmlName = p.First().Name,
-                XmlType = XmlType.Element
+                XmlType = XmlType.Element,
+                IsGenericCollection = true,
             });
         }
     }
